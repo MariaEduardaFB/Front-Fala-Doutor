@@ -1,13 +1,14 @@
 import { useState } from 'react'
-import './style.css'
+import './style.js'
+import { Title, Button } from './style.js'
 
 function Home() {
-  
-
   return (
     <>
-      <div> 
-        <h1 className='titulo'>Fala Doutor</h1>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}> 
+        <Title>Fala Doutor</Title>
+        <Button>Pacientes</Button>
+        <Button>Médicos</Button>
         
       </div>
     </>
