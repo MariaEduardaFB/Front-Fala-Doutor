@@ -15,6 +15,6 @@ const Button = styled.button`
   padding: 0.5rem ;
   border: none;
   width: 15rem;
-  margin-top: 1.5rem;`;
+  margin-top: 1rem;`;
 
 export { Title, Button };

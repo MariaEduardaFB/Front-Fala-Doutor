@@ -1,16 +1,16 @@
-import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import './style.js'
 import { Title, Button } from './style.js'
 
 function Home() {
+  const navigate = useNavigate()
   return (
     <>
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}> 
         <Title>Fala Doutor</Title>
-        <Button>Pacientes</Button>
-        <Button>Médicos</Button>
-        
-      </div>
+        <Button onClick={() => navigate('/lista-pacientes')}>Pacientes</Button>
+        <Button onClick={() => navigate('/medicos')}>Médicos</Button>
+        </div>
     </>
   )
 }
