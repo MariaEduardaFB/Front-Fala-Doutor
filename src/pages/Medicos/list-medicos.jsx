@@ -1,0 +1,6 @@
+import { useEffect, useState } from 'react'
+import './style.js'
+import { Title, Lista, PacienteItem, IconGroup, Button } from './style.js'
+import { AiOutlineUser } from 'react-icons/ai'
+import { FaRegEye, FaRegTrashAlt, FaPencilAlt, FaPlus } from 'react-icons/fa'
+import PacienteModal from './PatientFormModal.jsx'

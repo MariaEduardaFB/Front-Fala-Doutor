@@ -1,4 +1,4 @@
-// ...existing code...
+
 import { useEffect, useState } from 'react'
 import './style.js'
 import { Title, Lista, PacienteItem, IconGroup, Button } from './style.js'
