@@ -17,12 +17,11 @@ function ListaMedicos() {
 
     async function fetchMedicos() {
         try {
-            const response = await api.get('/medicos')
-            if (!response.ok) throw new Error('Erro ao buscar médicos')
-            const data = await response.json()
-            setMedicos(data)
+            const res = await api.get('/medicos')
+            setMedicos(res.data)
         } catch (err) {
-            setError(err.message)
+            console.error('fetchMedicos error:', err, err?.response?.data)
+            setError(err?.response?.data?.message || err.message || 'Erro ao buscar médicos')
         }
     }
 
@@ -30,37 +29,38 @@ function ListaMedicos() {
 
     if (error) return <div>Erro: {error}</div>
 
-    // create
     async function createMedico(formData) {
         try {
             const response = await api.post('/medicos', formData)
-            if (!response.ok) throw new Error('Erro ao salvar médico')
-            const savedMedico = await response.json()
-
+            console.log(response)
+            if (!response.status === 201) throw new Error('Erro ao salvar médico')
+            // const savedMedico = await response.json()
             await fetchMedicos()
             setModalOpen(false)
+
         } catch (err) {
             setError(err.message)
+            console.error('createMedico error:', err, err?.response?.data)
         }
+
     }
 
     async function editMedico(payload) {
         try {
             const res = await api.put(`/medicos/${payload.id}`, payload)
-            if (!res.ok) throw new Error('Erro ao atualizar médico')
-            const updated = await res.json()
+            console.log(res)
+            if (!res.status === 200) throw new Error('Erro ao atualizar médico')
 
             await fetchMedicos()
-
-            if (selectedMedico && (selectedMedico.id ?? selectedMedico._id) === (updated.id ?? updated._id)) {
-                setSelectedMedico(updated)
-            }
-
-            if (modalMode === 'create' || modalMode === 'edit') {
-                setModalOpen(false)
+            if (selectedMedico && (selectedMedico.id ?? selectedMedico._id) === (res.data.id ?? res.data._id)) {
+                setSelectedMedico(res.data)
+                if (modalMode === 'create' || modalMode === 'edit') {
+                    setModalOpen(false)
+                }
             }
         } catch (err) {
             setError(err.message)
+            console.error('editMedico error:', err, err?.response?.data)
         }
     }
 
@@ -68,8 +68,7 @@ function ListaMedicos() {
         try {
             const idToDelete = medico.id ?? medico._id
             const res = await api.delete(`/medicos/${idToDelete}`)
-            if (!res.ok) throw new Error('Erro ao excluir médico')
-
+            if (!res === 200) throw new Error('Erro ao excluir médico')
             await fetchMedicos()
             setModalOpen(false)
         } catch (err) {
