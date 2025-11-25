@@ -1,7 +1,10 @@
 import axios from 'axios';
 
+console.log(import.meta.env.VITE_ENDPOINT_API);
+
+
 const api = axios.create({
-    baseURL: 'http://localhost:3000', // troque pela sua base URL
+    baseURL: import.meta.env.VITE_ENDPOINT_API, 
     timeout: 10000,
     headers: {
         'Content-Type': 'application/json',

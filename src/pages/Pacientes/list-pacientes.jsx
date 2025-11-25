@@ -4,26 +4,26 @@ import './style.js'
 import { Title, Lista, PacienteItem, IconGroup, Button } from './style.js'
 import { AiOutlineUser } from 'react-icons/ai'
 import { FaRegEye, FaRegTrashAlt, FaPencilAlt, FaPlus } from 'react-icons/fa'
-import PacienteModal from './PatientFormModal.jsx'
+import PacienteModal from './paciente-form-modal.jsx'
+import api from '../../services/api.js'
 
 function ListaPacientes() {
     const [pacientes, setPacientes] = useState([])
     const [error, setError] = useState(null)
 
-    
+
     const [modalOpen, setModalOpen] = useState(false)
-    const [modalMode, setModalMode] = useState('create') 
+    const [modalMode, setModalMode] = useState('create')
     const [selectedPaciente, setSelectedPaciente] = useState(null)
 
-    
+
     async function fetchPacientes() {
         try {
-            const response = await fetch('http://localhost:3000/pacientes')
-            if (!response.ok) throw new Error('Erro ao buscar pacientes')
-            const data = await response.json()
-            setPacientes(data)
+            const res = await api.get('/pacientes')
+            setPacientes(res.data)
         } catch (err) {
-            setError(err.message)
+            console.error('fetchPacientes error:', err, err?.response?.data)
+            setError(err?.response?.data?.message || err.message || 'Erro ao buscar pacientes')
         }
     }
 
@@ -31,59 +31,52 @@ function ListaPacientes() {
 
     if (error) return <div>Erro: {error}</div>
 
-    // create
+
     async function createPaciente(formData) {
         try {
-            const response = await fetch('http://localhost:3000/pacientes', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formData)
-            })
-            if (!response.ok) throw new Error('Erro ao salvar paciente')
-            const savedPaciente = await response.json()
-            
+            const response = await api.post('/pacientes', formData)
+            console.log(response)
+            if (!response.status === 201) throw new Error('Erro ao salvar paciente')
+            // const savedPaciente = await response.json()
             await fetchPacientes()
             setModalOpen(false)
+
         } catch (err) {
             setError(err.message)
+            console.error('createPaciente error:', err, err?.response?.data)
         }
+
     }
 
-   
+
     async function editPaciente(payload) {
         try {
-            const res = await fetch(`http://localhost:3000/pacientes/${payload.id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            })
-            if (!res.ok) throw new Error('Erro ao atualizar paciente')
-            const updated = await res.json()
+            const res = await api.put(`/pacientes/${payload.id}`, payload)
+            console.log(res)
+            if (!res.status === 200) throw new Error('Erro ao atualizar paciente')
 
-            
+
             await fetchPacientes()
+            if (selectedPaciente && (selectedPaciente.id ?? selectedPaciente._id) === (res.data.id ?? res.data._id)) {
+                setSelectedPaciente(res.data)
 
-            
-            if (selectedPaciente && (selectedPaciente.id ?? selectedPaciente._id) === (updated.id ?? updated._id)) {
-                setSelectedPaciente(updated)
-            }
-
-            
-            if (modalMode === 'create' || modalMode === 'edit') {
-                setModalOpen(false)
+                if (modalMode === 'create' || modalMode === 'edit') {
+                    setModalOpen(false)
+                }
             }
         } catch (err) {
             setError(err.message)
+            console.error('editPaciente error:', err, err?.response?.data)
         }
     }
 
-    
+
     async function deletePaciente(paciente) {
         try {
             const idToDelete = paciente.id ?? paciente._id
-            const res = await fetch(`http://localhost:3000/pacientes/${idToDelete}`, { method: 'DELETE' })
-            if (!res.ok) throw new Error('Erro ao excluir paciente')
-            
+            const res = await api.delete(`/pacientes/${idToDelete}`)
+            if (!res === 200) throw new Error('Erro ao excluir paciente')
+
             await fetchPacientes()
             setModalOpen(false)
         } catch (err) {
@@ -91,7 +84,7 @@ function ListaPacientes() {
         }
     }
 
-    
+
     function openCreate() { setSelectedPaciente(null); setModalMode('create'); setModalOpen(true) }
     function openView(p) {
         const id = p.id ?? p._id
@@ -115,7 +108,7 @@ function ListaPacientes() {
         setModalOpen(true)
     }
 
-    
+
     async function handleSave(payload, mode) {
         if (mode === 'create') return await createPaciente(payload)
         if (mode === 'edit') return await editPaciente(payload)

@@ -9,7 +9,7 @@ function Home() {
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}> 
         <Title>Fala Doutor</Title>
         <Button onClick={() => navigate('/lista-pacientes')}>Pacientes</Button>
-        <Button onClick={() => navigate('/medicos')}>Médicos</Button>
+        <Button onClick={() => navigate('/lista-medicos')}>Médicos</Button>
         </div>
     </>
   )

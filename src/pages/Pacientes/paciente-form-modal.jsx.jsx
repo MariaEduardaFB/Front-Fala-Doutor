@@ -66,7 +66,8 @@ function PacienteModal({ mode = 'create', paciente = null, isOpen, onClose, onSa
       if (onSave) await onSave(payload, mode);
       onClose?.();
     } catch (err) {
-      setErrorMsg(err?.message || 'Erro ao salvar paciente.');
+      setErrorMsg(err?.message || 'Erro ao salvar paciente 2.');
+      console.error('handleSubmit error:', err, err?.response?.data);
     }
   }
 
