@@ -36,15 +36,20 @@ function ListaPacientes() {
         try {
             const response = await api.post('/pacientes', formData)
             console.log(response)
-            if (!response.status === 201) throw new Error('Erro ao salvar paciente')
-            // const savedPaciente = await response.json()
-            await fetchPacientes()
-            setModalOpen(false)
+                if (response.status !== 201 && response.status !== 200) {
+                    const msg = response?.data?.message || response.statusText || 'Erro ao salvar paciente'
+                    console.error('createPaciente bad status:', response.status, response.data)
+                    throw new Error(msg)
+                }
+                await fetchPacientes()
+                setModalOpen(false)
 
-        } catch (err) {
-            setError(err.message)
-            console.error('createPaciente error:', err, err?.response?.data)
-        }
+            } catch (err) {
+                
+                console.error('createPaciente error:', err, err?.response?.data)
+                const message = err?.response?.data?.message || err.message || 'Erro ao salvar paciente'
+                throw new Error(message)
+            }
 
     }
 
@@ -53,21 +58,25 @@ function ListaPacientes() {
         try {
             const res = await api.put(`/pacientes/${payload.id}`, payload)
             console.log(res)
-            if (!res.status === 200) throw new Error('Erro ao atualizar paciente')
-
-
-            await fetchPacientes()
-            if (selectedPaciente && (selectedPaciente.id ?? selectedPaciente._id) === (res.data.id ?? res.data._id)) {
-                setSelectedPaciente(res.data)
-
-                if (modalMode === 'create' || modalMode === 'edit') {
-                    setModalOpen(false)
+                if (res.status !== 200) {
+                    const msg = res?.data?.message || res.statusText || 'Erro ao atualizar paciente'
+                    console.error('editPaciente bad status:', res.status, res.data)
+                    throw new Error(msg)
                 }
+
+                await fetchPacientes()
+                if (selectedPaciente && (selectedPaciente.id ?? selectedPaciente._id) === (res.data.id ?? res.data._id)) {
+                    setSelectedPaciente(res.data)
+
+                    if (modalMode === 'create' || modalMode === 'edit') {
+                        setModalOpen(false)
+                    }
+                }
+            } catch (err) {
+                console.error('editPaciente error:', err, err?.response?.data)
+                const message = err?.response?.data?.message || err.message || 'Erro ao atualizar paciente'
+                throw new Error(message)
             }
-        } catch (err) {
-            setError(err.message)
-            console.error('editPaciente error:', err, err?.response?.data)
-        }
     }
 
 
@@ -75,13 +84,19 @@ function ListaPacientes() {
         try {
             const idToDelete = paciente.id ?? paciente._id
             const res = await api.delete(`/pacientes/${idToDelete}`)
-            if (!res === 200) throw new Error('Erro ao excluir paciente')
+                if (res.status !== 200 && res.status !== 204) {
+                    const msg = res?.data?.message || res.statusText || 'Erro ao excluir paciente'
+                    console.error('deletePaciente bad status:', res.status, res.data)
+                    throw new Error(msg)
+                }
 
-            await fetchPacientes()
-            setModalOpen(false)
-        } catch (err) {
-            setError(err.message)
-        }
+                await fetchPacientes()
+                setModalOpen(false)
+            } catch (err) {
+                console.error('deletePaciente error:', err, err?.response?.data)
+                const message = err?.response?.data?.message || err.message || 'Erro ao excluir paciente'
+                throw new Error(message)
+            }
     }
 
 

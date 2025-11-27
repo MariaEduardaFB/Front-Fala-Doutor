@@ -33,15 +33,19 @@ function ListaMedicos() {
         try {
             const response = await api.post('/medicos', formData)
             console.log(response)
-            if (!response.status === 201) throw new Error('Erro ao salvar médico')
-            // const savedMedico = await response.json()
-            await fetchMedicos()
-            setModalOpen(false)
+                if (response.status !== 201 && response.status !== 200) {
+                    const msg = response?.data?.message || response.statusText || 'Erro ao salvar médico'
+                    console.error('createMedico bad status:', response.status, response.data)
+                    throw new Error(msg)
+                }
+                await fetchMedicos()
+                setModalOpen(false)
 
-        } catch (err) {
-            setError(err.message)
-            console.error('createMedico error:', err, err?.response?.data)
-        }
+            } catch (err) {
+                console.error('createMedico error:', err, err?.response?.data)
+                const message = err?.response?.data?.message || err.message || 'Erro ao salvar médico'
+                throw new Error(message)
+            }
 
     }
 
@@ -49,7 +53,11 @@ function ListaMedicos() {
         try {
             const res = await api.put(`/medicos/${payload.id}`, payload)
             console.log(res)
-            if (!res.status === 200) throw new Error('Erro ao atualizar médico')
+            if (res.status !== 200) {
+                const msg = res?.data?.message || res.statusText || 'Erro ao atualizar médico'
+                console.error('editMedico bad status:', res.status, res.data)
+                throw new Error(msg)
+            }
 
             await fetchMedicos()
             if (selectedMedico && (selectedMedico.id ?? selectedMedico._id) === (res.data.id ?? res.data._id)) {
@@ -59,8 +67,9 @@ function ListaMedicos() {
                 }
             }
         } catch (err) {
-            setError(err.message)
             console.error('editMedico error:', err, err?.response?.data)
+            const message = err?.response?.data?.message || err.message || 'Erro ao atualizar médico'
+            throw new Error(message)
         }
     }
 
@@ -68,11 +77,17 @@ function ListaMedicos() {
         try {
             const idToDelete = medico.id ?? medico._id
             const res = await api.delete(`/medicos/${idToDelete}`)
-            if (!res === 200) throw new Error('Erro ao excluir médico')
+            if (res.status !== 200 && res.status !== 204) {
+                const msg = res?.data?.message || res.statusText || 'Erro ao excluir médico'
+                console.error('deleteMedico bad status:', res.status, res.data)
+                throw new Error(msg)
+            }
             await fetchMedicos()
             setModalOpen(false)
         } catch (err) {
-            setError(err.message)
+            console.error('deleteMedico error:', err, err?.response?.data)
+            const message = err?.response?.data?.message || err.message || 'Erro ao excluir médico'
+            throw new Error(message)
         }
     }
 

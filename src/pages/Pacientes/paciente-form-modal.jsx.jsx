@@ -54,6 +54,8 @@ function PacienteModal({ mode = 'create', paciente = null, isOpen, onClose, onSa
 
   
     if (!cpf.trim()) { setErrorMsg('CPF é obrigatório.'); return; }
+    const onlyDigitsCpf = cpf.replace(/\D/g, '')
+    if (onlyDigitsCpf.length !== 11) { setErrorMsg('CPF precisa ter 11 dígitos.'); return }
 
     const payload = {
       ... (paciente?.id ? { id: paciente.id } : {}),
@@ -66,8 +68,9 @@ function PacienteModal({ mode = 'create', paciente = null, isOpen, onClose, onSa
       if (onSave) await onSave(payload, mode);
       onClose?.();
     } catch (err) {
-      setErrorMsg(err?.message || 'Erro ao salvar paciente 2.');
-      console.error('handleSubmit error:', err, err?.response?.data);
+      
+      setErrorMsg(err?.message || err?.response?.data?.message || 'Erro ao salvar paciente.');
+      console.error('handleSubmit error:', err, err?.response?.data || err?.message);
     }
   }
 

@@ -1,4 +1,4 @@
-// ...existing code...
+
 import React, { useEffect, useRef, useState } from 'react';
 import {
   Overlay, ModalBox, Header, CloseBtn, Form, Input, Actions,
@@ -55,6 +55,8 @@ function MedicoModal({ mode = 'create', medico = null, isOpen, onClose, onSave, 
 
 
     if (!crm.trim()) { setErrorMsg('CRM é obrigatório.'); return; }
+    const onlyDigitsCrm = crm.replace(/\D/g, '')
+    if (onlyDigitsCrm.length !== 6) { setErrorMsg('CRM precisa ter 6 dígitos.'); return }
 
     const payload = {
       ... (medico?.id ? { id: medico.id } : {}),
@@ -67,7 +69,7 @@ function MedicoModal({ mode = 'create', medico = null, isOpen, onClose, onSave, 
       if (onSave) await onSave(payload, mode);
       onClose?.();
     } catch (err) {
-      setErrorMsg(err?.message || 'Erro ao salvar médico.');
+      setErrorMsg(err?.message || err?.response?.data?.message || 'Erro ao salvar médico.');
     }
   }
 
