@@ -19,7 +19,7 @@ function ListaPacientes() {
 
     async function fetchPacientes() {
         try {
-            const res = await api.get('/pacientes')
+            const res = await api.get('/pacientes?include=plano_saude')
             setPacientes(res.data)
         } catch (err) {
             console.error('fetchPacientes error:', err, err?.response?.data)
@@ -107,6 +107,12 @@ function ListaPacientes() {
         setSelectedPaciente(fresh || p)
         setModalMode('view')
         setModalOpen(true)
+        // Buscar paciente com plano_saude
+        api.get(`/pacientes/${id}`).then(res => {
+            setSelectedPaciente(res.data)
+        }).catch(err => {
+            console.error('Erro ao buscar paciente:', err)
+        })
     }
     function openEdit(p) {
         const id = p.id ?? p._id
@@ -139,6 +145,7 @@ function ListaPacientes() {
                     onClose={() => setModalOpen(false)}
                     onSave={handleSave}
                     onDelete={deletePaciente}
+                    onRefresh={fetchPacientes}
                 />
 
                 <Title>Lista de Pacientes</Title>

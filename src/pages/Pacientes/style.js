@@ -147,4 +147,33 @@ const Secondary = styled.button`
   &:hover { background: #c0392b; }
 `;
 
-export { Title, TitleModal, Lista, PacienteItem, IconGroup, Button, Overlay, ModalBox, Header, CloseBtn, Form, Input, Actions, Primary, Secondary, FieldLabel, LabelText };
+const PlanoInfo = styled.div`
+  margin-top: 1rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 4px;
+`;
+
+const PlanoBadge = styled.span`
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  border-radius: 3px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  color: #fff;
+  background: ${props => props.$ativo ? '#28a745' : '#dc3545'};
+  margin-bottom: 0.5rem;
+`;
+
+const PlanoBtn = styled.button`
+  background: #007bff;
+  color: #fff;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background .12s;
+  &:hover { background: #0056b3; }
+`;
+
+export { Title, TitleModal, Lista, PacienteItem, IconGroup, Button, Overlay, ModalBox, Header, CloseBtn, Form, Input, Actions, Primary, Secondary, FieldLabel, LabelText, PlanoInfo, PlanoBadge, PlanoBtn };
