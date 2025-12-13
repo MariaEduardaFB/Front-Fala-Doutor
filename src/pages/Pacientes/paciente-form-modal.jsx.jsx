@@ -93,12 +93,12 @@ function PacienteModal({ mode = 'create', paciente = null, isOpen, onClose, onSa
     const plano = paciente?.plano_saude || paciente?.PlanoSaude;
     if (!plano) return null;
     
-    // Se o status vier do backend, usar ele
+    
     if (plano.status) {
       return plano.status === 'ativo';
     }
     
-    // Caso contrário, calcular no frontend
+    
     const validade = new Date(plano.validade);
     validade.setHours(23, 59, 59, 999);
     const hoje = new Date();
@@ -150,7 +150,7 @@ function PacienteModal({ mode = 'create', paciente = null, isOpen, onClose, onSa
                       borderRadius: '4px',
                       marginBottom: '0.5rem'
                     }}>
-                      ⚠️ Plano vencido. Não é possível agendar consultas com plano inativo.
+                      Plano vencido. Não é possível agendar consultas com plano inativo.
                     </div>
                   )}
                   {!editandoPlano ? (
