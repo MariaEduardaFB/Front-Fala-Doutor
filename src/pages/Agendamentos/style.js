@@ -228,6 +228,119 @@ const InfoMessage = styled.div`
   font-size: 0.9rem;
 `;
 
+const FilterGroup = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+`;
+
+const FilterButton = styled.button`
+  background: #020054;
+  border-radius: 3px;
+  border: none;
+  padding: 0.4rem 0.8rem;
+  color: #FFFFFF;
+  cursor: pointer;
+  font-size: 0.9rem;
+  
+  &:hover {
+    background: #010038;
+  }
+`;
+
+const DateInput = styled.input`
+  padding: 0.4rem;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+  font-size: 0.9rem;
+`;
+
+const ModalLarge = styled.div`
+  background: #fff;
+  border-radius: 6px;
+  width: 95%;
+  max-width: 1200px;
+  max-height: 90vh;
+  overflow-y: auto;
+  padding: 2rem;
+  box-shadow: 0 6px 24px rgba(0,0,0,0.2);
+`;
+
+const Table = styled.table`
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+  
+  th, td {
+    border: 1px solid #ddd;
+    padding: 0.5rem;
+    text-align: left;
+  }
+  
+  th {
+    background: #020054;
+    color: #fff;
+    font-weight: bold;
+  }
+  
+  tr:nth-child(even) {
+    background: #f9f9f9;
+  }
+`;
+
+const ChartContainer = styled.div`
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background: #f9f9f9;
+  border-radius: 6px;
+`;
+
+const FilterGroupModal = styled.div`
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;
+  margin-top: 1rem;
+`;
+
+const Label = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+`;
+
+const SelectAuto = styled(Select)`
+  width: auto;
+`;
+
+const ExportButton = styled(Primary)`
+  background: #f0ad4e;
+  
+  &:hover {
+    background: #c6842b;
+  }
+`;
+
+const ReportTitle = styled.h4`
+  margin-top: 1.5rem;
+  color: #020054;
+`;
+
+const ChartTitle = styled.h5`
+  text-align: center;
+  margin-bottom: 1rem;
+`;
+
+const EmptyMessage = styled.p`
+  text-align: center;
+  margin-top: 2rem;
+  color: #666;
+`;
+
 export {
   Title,
   TitleModal,
@@ -251,5 +364,18 @@ export {
   Primary,
   Secondary,
   ErrorMessage,
-  InfoMessage
+  InfoMessage,
+  FilterGroup,
+  FilterButton,
+  DateInput,
+  ModalLarge,
+  Table,
+  ChartContainer,
+  FilterGroupModal,
+  Label,
+  SelectAuto,
+  ExportButton,
+  ReportTitle,
+  ChartTitle,
+  EmptyMessage
 };

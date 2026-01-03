@@ -1,10 +1,17 @@
 import { useEffect, useState } from 'react';
 import {
-  Title, Lista, AgendamentoItem, AgendamentoInfo, IconGroup, Button, StatusBadge
+  Title, Lista, AgendamentoItem, AgendamentoInfo, IconGroup, Button, StatusBadge,
+  FilterGroup, FilterButton, DateInput
 } from './style.js';
-import { FaRegEye, FaRegTrashAlt, FaPencilAlt, FaPlus, FaCalendarAlt } from 'react-icons/fa';
+import { FaRegEye, FaRegTrashAlt, FaPencilAlt, FaPlus, FaCalendarAlt, FaChartBar } from 'react-icons/fa';
 import AgendamentoModal from './agendamento-form-modal.jsx';
+import RelatorioModal from './relatorio-modal.jsx';
 import api from '../../services/api.js';
+import {
+  buscaInicioSemana,
+  buscaInicioMes,
+  buscaInicioAno,
+} from "../../assets/utils/datas";
 
 function ListaAgendamentos() {
   const [agendamentos, setAgendamentos] = useState([]);
@@ -12,10 +19,19 @@ function ListaAgendamentos() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState('create');
   const [selectedAgendamento, setSelectedAgendamento] = useState(null);
+  const [relatorioModalOpen, setRelatorioModalOpen] = useState(false);
+  const [dataInicial, setDataInicial] = useState("");
+  const [dataFinal, setDataFinal] = useState("");
 
-  async function fetchAgendamentos() {
+  async function fetchAgendamentos(inicio = null, fim = null) {
     try {
-      const res = await api.get('/consultas');
+      let url = '/consultas';
+      const params = {};
+      if (inicio && fim) {
+        params.dataInicial = inicio;
+        params.dataFinal = fim;
+      }
+      const res = await api.get(url, { params });
       setAgendamentos(res.data);
     } catch (err) {
       console.error('fetchAgendamentos error:', err, err?.response?.data);
@@ -128,6 +144,75 @@ function ListaAgendamentos() {
     return statusMap[status] || status;
   }
 
+  function handleFiltroDia() {
+    const hoje = new Date();
+    const inicio = new Date(hoje);
+    inicio.setHours(0, 0, 0, 0);
+    const fim = new Date(hoje);
+    fim.setHours(23, 59, 59, 999);
+    const dataInicialStr = inicio.toISOString().slice(0, 10);
+    const dataFinalStr = fim.toISOString().slice(0, 10);
+    setDataInicial(dataInicialStr);
+    setDataFinal(dataFinalStr);
+    fetchAgendamentos(dataInicialStr, dataFinalStr);
+  }
+
+  function handleFiltroSemana() {
+    const inicio = buscaInicioSemana(new Date());
+    const fim = new Date(inicio);
+    fim.setDate(fim.getDate() + 6);
+    fim.setHours(23, 59, 59, 999);
+    const dataInicialStr = inicio.toISOString().slice(0, 10);
+    const dataFinalStr = fim.toISOString().slice(0, 10);
+    setDataInicial(dataInicialStr);
+    setDataFinal(dataFinalStr);
+    fetchAgendamentos(dataInicialStr, dataFinalStr);
+  }
+
+  function handleFiltroMes() {
+    const inicio = buscaInicioMes(new Date());
+    const fim = new Date(inicio.getFullYear(), inicio.getMonth() + 1, 0);
+    fim.setHours(23, 59, 59, 999);
+    const dataInicialStr = inicio.toISOString().slice(0, 10);
+    const dataFinalStr = fim.toISOString().slice(0, 10);
+    setDataInicial(dataInicialStr);
+    setDataFinal(dataFinalStr);
+    fetchAgendamentos(dataInicialStr, dataFinalStr);
+  }
+
+  function handleFiltroAno() {
+    const inicio = buscaInicioAno(new Date());
+    const fim = new Date(inicio.getFullYear(), 11, 31);
+    fim.setHours(23, 59, 59, 999);
+    const dataInicialStr = inicio.toISOString().slice(0, 10);
+    const dataFinalStr = fim.toISOString().slice(0, 10);
+    setDataInicial(dataInicialStr);
+    setDataFinal(dataFinalStr);
+    fetchAgendamentos(dataInicialStr, dataFinalStr);
+  }
+
+  function handleDataInicialChange(e) {
+    const newDataInicial = e.target.value;
+    setDataInicial(newDataInicial);
+    if (newDataInicial && dataFinal) {
+      fetchAgendamentos(newDataInicial, dataFinal);
+    }
+  }
+
+  function handleDataFinalChange(e) {
+    const newDataFinal = e.target.value;
+    setDataFinal(newDataFinal);
+    if (dataInicial && newDataFinal) {
+      fetchAgendamentos(dataInicial, newDataFinal);
+    }
+  }
+
+  function handleLimparFiltros() {
+    setDataInicial("");
+    setDataFinal("");
+    fetchAgendamentos();
+  }
+
   return (
     <>
       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
@@ -140,15 +225,47 @@ function ListaAgendamentos() {
           onDelete={deleteAgendamento}
         />
 
+        <RelatorioModal
+          isOpen={relatorioModalOpen}
+          onClose={() => setRelatorioModalOpen(false)}
+        />
+
         <Title>Agendamentos</Title>
 
-        <Button onClick={openCreate}>
-          <FaPlus
-            title="Adicionar"
-            style={{ color: '#FFFFFF', cursor: 'pointer' }}
+        <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
+          <Button onClick={openCreate}>
+            <FaPlus style={{ color: '#FFFFFF' }} />
+            Agendar Consulta
+          </Button>
+          <Button onClick={() => setRelatorioModalOpen(true)}>
+            <FaChartBar style={{ color: '#FFFFFF' }} />
+            Relatórios
+          </Button>
+        </div>
+
+        <FilterGroup>
+          <FilterButton onClick={handleFiltroDia}>Esse dia</FilterButton>
+          <FilterButton onClick={handleFiltroSemana}>Essa semana</FilterButton>
+          <FilterButton onClick={handleFiltroMes}>Esse mês</FilterButton>
+          <FilterButton onClick={handleFiltroAno}>Esse ano</FilterButton>
+          <DateInput 
+            type="date" 
+            value={dataInicial} 
+            onChange={handleDataInicialChange}
+            placeholder="Data Inicial"
           />
-          Agendar Consulta
-        </Button>
+          <DateInput 
+            type="date" 
+            value={dataFinal} 
+            onChange={handleDataFinalChange}
+            placeholder="Data Final"
+          />
+          {(dataInicial || dataFinal) && (
+            <FilterButton onClick={handleLimparFiltros} style={{ background: '#e74c3c' }}>
+              Limpar
+            </FilterButton>
+          )}
+        </FilterGroup>
 
         <Lista>
           {agendamentos.length === 0 ? (

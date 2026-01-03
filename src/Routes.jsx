@@ -4,6 +4,7 @@ import { ListaPacientes } from './pages/Pacientes/list-pacientes.jsx'
 import { ListaMedicos } from './pages/Medicos/list-medicos.jsx'
 import ListaAgendamentos from './pages/Agendamentos/list-agendamentos.jsx'
 
+
 function AppRoutes() {
   return (
     <BrowserRouter>
@@ -12,6 +13,7 @@ function AppRoutes() {
         <Route path='/lista-pacientes' element={<ListaPacientes />} />
         <Route path='/lista-medicos' element={<ListaMedicos />} />
         <Route path='/agendamentos' element={<ListaAgendamentos />} />
+        
         <Route path='*' element={<h1>404 Not Found</h1>} />
       </Routes>
     </BrowserRouter>
