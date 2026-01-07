@@ -46,7 +46,7 @@ function AgendamentoModal({ mode = 'create', agendamento = null, isOpen, onClose
       setPacienteId(agendamento.paciente_id || agendamento.Paciente?.id || '');
       setMedicoId(agendamento.medico_id || agendamento.Medico?.id || '');
       
-      // Formatar data para datetime-local
+      
       if (agendamento.data_hora) {
         const data = new Date(agendamento.data_hora);
         const ano = data.getFullYear();
@@ -205,19 +205,19 @@ function AgendamentoModal({ mode = 'create', agendamento = null, isOpen, onClose
 
           {pacienteSelecionado && !pacienteSelecionado.PlanoSaude && (
             <ErrorMessage>
-              ⚠️ Este paciente não possui plano de saúde. Não é possível agendar consulta.
+              Este paciente não possui plano de saúde. Não é possível agendar consulta.
             </ErrorMessage>
           )}
 
           {pacienteSelecionado && pacienteSelecionado.PlanoSaude && !planoAtivo && (
             <ErrorMessage>
-              ⚠️ Paciente com plano de saúde vencido. Não é possível agendar consulta.
+              Paciente com plano de saúde vencido. Não é possível agendar consulta.
             </ErrorMessage>
           )}
 
           {pacienteSelecionado && pacienteSelecionado.PlanoSaude && planoAtivo && (
             <InfoMessage>
-              ✓ Paciente com plano de saúde ativo: {pacienteSelecionado.PlanoSaude.nome}
+              Paciente com plano de saúde ativo: {pacienteSelecionado.PlanoSaude.nome}
             </InfoMessage>
           )}
 
