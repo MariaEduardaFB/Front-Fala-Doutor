@@ -37,7 +37,9 @@ function RelatorioModal({ isOpen, onClose }) {
         params: { dataInicial: inicio, dataFinal: fim }
       });
       console.log('Dados recebidos:', res.data);
-      setDados(res.data);
+      setDados(res.data.agendamentos || []);
+
+
     } catch (err) {
       console.error('Erro ao buscar relatório:', err);
       console.error('Detalhes do erro:', err.response?.data);
@@ -76,7 +78,10 @@ function RelatorioModal({ isOpen, onClose }) {
 
   if (!isOpen) return null;
 
-  const totalAgendamentos = dados.reduce((acc, item) => acc + Number(item.quantidade || 0), 0);
+  const totalAgendamentos = Array.isArray(dados)
+  ? dados.reduce((acc, item) => acc + Number(item.quantidade || 0), 0)
+  : 0;
+
 
   function handleExportar() {
     if (dados.length === 0) {

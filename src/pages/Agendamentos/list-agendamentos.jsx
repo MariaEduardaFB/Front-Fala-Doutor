@@ -22,6 +22,9 @@ function ListaAgendamentos() {
   const [relatorioModalOpen, setRelatorioModalOpen] = useState(false);
   const [dataInicial, setDataInicial] = useState("");
   const [dataFinal, setDataFinal] = useState("");
+  const [pacientes, setPacientes] = useState([]);
+  const [medicos, setMedicos] = useState([]);
+
 
   async function fetchAgendamentos(inicio = null, fim = null) {
     try {
@@ -39,7 +42,23 @@ function ListaAgendamentos() {
     }
   }
 
-  useEffect(() => { fetchAgendamentos(); }, []);
+  useEffect(() => {
+  fetchAgendamentos();
+  fetchPacientes();
+  fetchMedicos();
+}, []);
+
+async function fetchPacientes() {
+  const res = await api.get('/pacientes');
+  setPacientes(res.data);
+}
+
+async function fetchMedicos() {
+  const res = await api.get('/medicos');
+  setMedicos(res.data);
+}
+
+
 
   if (error) return <div>Erro: {error}</div>;
 
@@ -120,9 +139,9 @@ function ListaAgendamentos() {
   }
 
   async function handleSave(payload, mode) {
-    if (mode === 'create') return await createAgendamento(payload);
-    if (mode === 'edit') return await editAgendamento(payload);
-  }
+  if (mode === 'create') return await createAgendamento(payload);
+  if (mode === 'edit') return await editAgendamento(payload);
+}
 
   function formatDateTime(dateString) {
     const date = new Date(dateString);
@@ -211,7 +230,16 @@ function ListaAgendamentos() {
     setDataInicial("");
     setDataFinal("");
     fetchAgendamentos();
+
   }
+
+  function getNomePaciente(id) {
+  return pacientes.find(p => p.id === id)?.nome || 'N/A';
+}
+
+function getNomeMedico(id) {
+  return medicos.find(m => m.id === id)?.nome || 'N/A';
+}
 
   return (
     <>
@@ -277,9 +305,10 @@ function ListaAgendamentos() {
                 
                 <AgendamentoInfo>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <strong>{agendamento.Paciente?.nome || 'N/A'}</strong>
-                    <span>→</span>
-                    <span>{agendamento.Medico?.nome || 'N/A'}</span>
+                    <strong>{getNomePaciente(agendamento.paciente_id)}</strong>
+<span>→</span>
+<span>{getNomeMedico(agendamento.medico_id)}</span>
+
                   </div>
                   <div style={{ fontSize: '0.85rem', color: '#666' }}>
                     {formatDateTime(agendamento.data_hora)}
