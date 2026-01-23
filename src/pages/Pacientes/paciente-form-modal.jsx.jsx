@@ -130,28 +130,25 @@ function PacienteModal({
 
 
   async function cadastrarPlano() {
-    if (!planoNome || !planoOperadora || !planoValidade) {
-      setErrorMsg('Preencha todos os campos do plano.');
-      return;
-    }
-
-    try {
-      const { data } = await api.post('/plano_saude', {
-        nome: planoNome,
-        operadora: planoOperadora,
-        validade: planoValidade
-      });
-
-      await api.put(`/pacientes/${paciente.id}`, {
-        plano_id: data.id
-      });
-
-      await onRefresh?.();
-      onClose?.();
-    } catch (err) {
-      setErrorMsg(err?.response?.data?.message || 'Erro ao cadastrar plano.');
-    }
+  if (!planoNome || !planoOperadora || !planoValidade) {
+    setErrorMsg('Preencha todos os campos do plano.');
+    return;
   }
+
+  try {
+    await api.post(`/pacientes/${paciente.id}/plano_saude`, {
+      nome: planoNome,
+      operadora: planoOperadora,
+      validade: planoValidade
+    });
+
+    await onRefresh?.();
+    onClose?.();
+  } catch (err) {
+    setErrorMsg(err?.response?.data?.error || 'Erro ao cadastrar plano.');
+  }
+}
+
 
 
   const readOnly = mode === 'view' || mode === 'delete';
